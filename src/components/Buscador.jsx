@@ -33,7 +33,6 @@ const Buscador = ({ searchFeriado, orderFeriado }) => {
             onChange={inputHandler}
           >
             <option value="">Ordenar por:</option>
-            <option value="">Tipo</option>
             <option value="date_asc">Fecha ascendente ↑</option>
             <option value="date_des">Fecha descendente ↓</option>
             <option value="az">Alfabéticamente ↑</option>

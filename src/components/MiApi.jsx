@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Buscador from './Buscador'; // Ruta corregida
+import Buscador from './Buscador';
 
 const MiApi = () => {
-  const [feriadosApi, setFeriadosApi] = useState(null);
+  const [feriadosApi, setFeriadosApi] = useState([]);
   const [buscar, setBuscar] = useState('');
   const [criterioOrdenamiento, setCriterioOrdenamiento] = useState('');
 
@@ -10,35 +10,37 @@ const MiApi = () => {
 
   const consultaApi = async () => {
     try {
-      const data = await fetch(URL);
-      const result = await data.json();
-      const ordenedData = result.items;
-      setFeriadosApi(ordenedData);
+      const response = await fetch(URL);
+      const result = await response.json();
+      setFeriadosApi(result.data || []);
     } catch (error) {
-      // Manejo específico del error aquí, por ejemplo:
       console.error("Error al cargar los datos:", error);
+      setFeriadosApi([]); // Establecer un array vacío en caso de error
     }
   };
 
   useEffect(() => {
     consultaApi();
-  }, []); // Sin dependencias, se ejecuta solo al montar el componente
+  }, []);
 
-  function ordenarPor(feriado) {
-    if (criterioOrdenamiento === 'date_des' || criterioOrdenamiento === 'date_asc') {
-      const date1 = new Date(feriado.date);
-      return date1.getTime();
+  const ordenarPor = (a, b) => {
+    if (criterioOrdenamiento === 'date_asc') {
+      return new Date(a.date) - new Date(b.date);
+    }
+    if (criterioOrdenamiento === 'date_des') {
+      return new Date(b.date) - new Date(a.date);
     }
     if (criterioOrdenamiento === 'az') {
-      return feriado.title.localeCompare(feriado);
+      return a.title.localeCompare(b.title);
     }
     if (criterioOrdenamiento === 'za') {
-      return feriado.title.localeCompare(feriado) * -1;
+      return b.title.localeCompare(a.title);
     }
-  }
+    return 0;
+  };
 
   const showFeriados = feriadosApi
-    ?.filter((feriado) => feriado.title.toLowerCase().includes(buscar.toLowerCase()))
+    .filter((feriado) => feriado.title.toLowerCase().includes(buscar.toLowerCase()))
     .sort(ordenarPor)
     .map((feriado) => (
       <div key={feriado.date} className="col">
@@ -46,16 +48,18 @@ const MiApi = () => {
           <div className="card-body">
             <h5 className="card-title">{feriado.title}</h5>
             <p className="card-text">
-              {feriado.short_description.slice(0, 50) + '...'}
+              {feriado.type}
             </p>
           </div>
           <div className="card-footer">
             <small className="text-body-secondary" title="Fecha lanzamiento">
-              {feriado.type}
+              {feriado.date}
             </small>
+          <div>
             <small className="text-body-secondary">
               <span className="badge bg-secondary">{feriado.extra}</span>
             </small>
+            </div>
           </div>
         </div>
       </div>
@@ -64,8 +68,8 @@ const MiApi = () => {
   return (
     <main>
       <Buscador searchFeriado={setBuscar} orderFeriado={setCriterioOrdenamiento} />
-      <div className="games row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
-        {showFeriados}
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+        {feriadosApi.length ? showFeriados : <p>No se encontraron feriados.</p>}
       </div>
     </main>
   );
