@@ -4,7 +4,7 @@ import Buscador from './Buscador';
 const MiApi = () => {
   const [feriadosApi, setFeriadosApi] = useState([]);
   const [buscar, setBuscar] = useState('');
-  const [criterioOrdenamiento, setCriterioOrdenamiento] = useState('');
+  const [criterioOrden, setCriterioOrden] = useState('');
 
   const URL = "https://api.boostr.cl/feriados/en.json";
 
@@ -15,7 +15,7 @@ const MiApi = () => {
       setFeriadosApi(result.data || []);
     } catch (error) {
       console.error("Error al cargar los datos:", error);
-      setFeriadosApi([]); // Establecer un array vacío en caso de error
+      setFeriadosApi([]);
     }
   };
 
@@ -24,16 +24,16 @@ const MiApi = () => {
   }, []);
 
   const ordenarPor = (a, b) => {
-    if (criterioOrdenamiento === 'date_asc') {
+    if (criterioOrden === 'date_asc') {
       return new Date(a.date) - new Date(b.date);
     }
-    if (criterioOrdenamiento === 'date_des') {
+    if (criterioOrden === 'date_des') {
       return new Date(b.date) - new Date(a.date);
     }
-    if (criterioOrdenamiento === 'az') {
+    if (criterioOrden === 'az') {
       return a.title.localeCompare(b.title);
     }
-    if (criterioOrdenamiento === 'za') {
+    if (criterioOrden === 'za') {
       return b.title.localeCompare(a.title);
     }
     return 0;
@@ -47,12 +47,9 @@ const MiApi = () => {
         <div className="card h-100">
           <div className="card-body">
             <h5 className="card-title">{feriado.title}</h5>
-            <p className="card-text">
-              {feriado.type}
-            </p>
           </div>
           <div className="card-footer">
-            <small className="text-body-secondary" title="Fecha lanzamiento">
+            <small className="text-body-secondary" title="Fecha">
               {feriado.date}
             </small>
           <div>
@@ -67,7 +64,7 @@ const MiApi = () => {
 
   return (
     <main>
-      <Buscador searchFeriado={setBuscar} orderFeriado={setCriterioOrdenamiento} />
+      <Buscador searchFeriado={setBuscar} orderFeriado={setCriterioOrden} />
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
         {feriadosApi.length ? showFeriados : <p>No se encontraron feriados.</p>}
       </div>
