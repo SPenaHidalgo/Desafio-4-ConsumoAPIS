@@ -1,39 +1,39 @@
-import React, { useEffect, useState } from 'react'
-import Buscador from './Buscador'
+import React, { useState, useEffect } from 'react';
+import Buscador from './Buscador'; // Ruta corregida
 
 const MiApi = () => {
-  const [feriadosApi, setFeriadosApi] = useState(null)
-  const[buscar, setBuscar] = useState('')
-  const [criterioOrdenamiento, setCriterioOrdenamiento] = useState('')
+  const [feriadosApi, setFeriadosApi] = useState(null);
+  const [buscar, setBuscar] = useState('');
+  const [criterioOrdenamiento, setCriterioOrdenamiento] = useState('');
 
-  const URL = "https://api.boostr.cl/feriados/en.json"
+  const URL = "https://api.boostr.cl/feriados/en.json";
 
   const consultaApi = async () => {
     try {
-      const data = await fetch(URL)
-      const result = await data.json()
-      const ordenedData = result.items
-      setFeriadosApi(ordenedData)
+      const data = await fetch(URL);
+      const result = await data.json();
+      const ordenedData = result.items;
+      setFeriadosApi(ordenedData);
     } catch (error) {
       // Manejo específico del error aquí, por ejemplo:
-      console.error("Error al cargar los datos:", error)
+      console.error("Error al cargar los datos:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    consultaApi()
-  }, []) // Sin dependencias, se ejecuta solo al montar el componente
+    consultaApi();
+  }, []); // Sin dependencias, se ejecuta solo al montar el componente
 
   function ordenarPor(feriado) {
     if (criterioOrdenamiento === 'date_des' || criterioOrdenamiento === 'date_asc') {
-      const date1 = new Date(feriado.date)
-      return date1.getTime()
+      const date1 = new Date(feriado.date);
+      return date1.getTime();
     }
     if (criterioOrdenamiento === 'az') {
-      return feriado.title.localeCompare(feriado)
+      return feriado.title.localeCompare(feriado);
     }
     if (criterioOrdenamiento === 'za') {
-      return feriado.title.localeCompare(feriado) * -1
+      return feriado.title.localeCompare(feriado) * -1;
     }
   }
 
@@ -59,7 +59,7 @@ const MiApi = () => {
           </div>
         </div>
       </div>
-    ))
+    ));
 
   return (
     <main>
@@ -68,7 +68,7 @@ const MiApi = () => {
         {showFeriados}
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default MiApi
+export default MiApi;
